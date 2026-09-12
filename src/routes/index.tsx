@@ -1,24 +1,87 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { ArrowDown, ArrowRight, Clock3, Coffee, MapPin, Menu, Moon, Sparkles, Star, Users, UtensilsCrossed, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import heroAsset from "@/assets/cafe-nova-hero.jpg.asset.json";
+import storyAsset from "@/assets/cafe-nova-story.jpg.asset.json";
+import buffetAsset from "@/assets/cafe-nova-buffet.jpg.asset.json";
+import nightAsset from "@/assets/cafe-nova-night.jpg.asset.json";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({ meta: [
+    { title: "Cafe Nova | Premium Hi-Tea & Buffet Faisalabad" },
+    { name: "description", content: "Discover Cafe Nova's Rs. 1,999 Hi-Tea Cum Buffet on West Canal Road, Faisalabad. Open daily from 12 PM to 1:30 AM." },
+    { property: "og:title", content: "Cafe Nova | Faisalabad" },
+    { property: "og:description", content: "Where every sip tells a story. Premium Hi-Tea and Buffet, Rs. 1,999 with no GST." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
+  component: CafeNova,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+const nav = [["Home","home"],["Our Story","story"],["Menu","menu"],["Hi-Tea","hi-tea"],["Ambiance","gallery"],["Location","location"],["Contact","contact"]] as const;
+const menus = {
+  "Appetizers & Salads": ["Crispy Finger Fish", "Chicken Kebab", "Malai Boti", "Assorted Sandwich / Wrap", "Mix Fruit Salad", "Thai Crunchy Salad", "Macaroni Salad", "Golghapy", "Chana Chat"],
+  "Main Course": ["Manchurian & Black Pepper", "Egg Fried Rice / Vegi Rice", "Chicken Steak", "Tarragon", "Moroccan", "Chicken Karahi", "Chicken Charsi Karahi", "Mix Vegetable", "Daal Makhni"],
+  "Tandoor": ["Sada Roti", "Roghni Naan", "Tandoori Paratha"],
+  "Desserts & Drinks": ["Fruit Custard", "Kheer", "Chocolate Brownie", "Chai", "Green Tea", "Lemon Grass Kehwa", "Mint Margarita", "Lemonade"],
+};
+
+function CafeNova() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [tab, setTab] = useState<keyof typeof menus>("Appetizers & Salads");
+  const [sent, setSent] = useState(false);
+  useEffect(() => { const onScroll = () => setScrolled(window.scrollY > 40); onScroll(); window.addEventListener("scroll", onScroll); return () => window.removeEventListener("scroll", onScroll); }, []);
+  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); setSent(true); };
+  const go = (id: string) => { setMobileOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); };
+
+  return <main className="overflow-x-hidden">
+    <header className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-500 ${scrolled ? "border-night-foreground/10 bg-night/90 py-3 backdrop-blur-xl" : "border-transparent bg-transparent py-5"}`}>
+      <div className="section-shell flex items-center justify-between text-night-foreground">
+        <button onClick={() => go("home")} className="cursor-pointer text-left" aria-label="Cafe Nova home"><span className="block font-display text-2xl leading-none">CAFE NOVA</span><span className="mt-1 block text-[0.48rem] uppercase tracking-[0.3em] text-gold">Faisalabad</span></button>
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">{nav.map(([label,id]) => <button key={id} onClick={() => go(id)} className="cursor-pointer text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-night-foreground/80 transition-colors hover:text-gold">{label}</button>)}</nav>
+        <div className="flex items-center gap-3"><Button size="lg" variant="nova" className="hidden md:inline-flex" onClick={() => go("reserve")}>Reserve a Table</Button><Button variant="nova-outline" size="icon" className="border-night-foreground/40 text-night-foreground lg:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation">{mobileOpen ? <X /> : <Menu />}</Button></div>
+      </div>
+      {mobileOpen && <nav className="border-t border-night-foreground/10 bg-night px-5 py-6 text-night-foreground lg:hidden">{nav.map(([label,id]) => <button key={id} onClick={() => go(id)} className="block w-full border-b border-night-foreground/10 py-3 text-left font-display text-2xl">{label}</button>)}<Button variant="nova" size="lg" className="mt-5 w-full" onClick={() => go("reserve")}>Reserve a Table</Button></nav>}
+    </header>
+
+    <section id="home" className="relative flex min-h-[92svh] items-end overflow-hidden bg-night text-night-foreground">
+      <img src={heroAsset.url} alt="Warm, elegant Cafe Nova inspired dining room" width={1920} height={1080} className="hero-zoom absolute inset-0 h-full w-full object-cover" />
+      <div className="hero-shade absolute inset-0" />
+      <div className="section-shell relative z-10 pb-20 pt-36 md:pb-28">
+        <div className="reveal-up max-w-3xl"><p className="mb-5 text-xs font-semibold uppercase tracking-[0.28em] text-gold">Welcome to Cafe Nova</p><h1 className="font-display text-5xl leading-[0.95] sm:text-6xl md:text-8xl">Where Every Sip<br/>Tells a Story.</h1><p className="mt-6 max-w-xl text-base leading-7 text-night-foreground/80 md:text-lg">Premium Hi-Tea & Buffet experience in the heart of Faisalabad.</p><div className="mt-9 flex flex-wrap gap-3"><Button variant="nova" size="lg" onClick={() => go("menu")}>Explore The Menu <ArrowRight /></Button><Button variant="nova-outline" size="lg" onClick={() => go("reserve")}>Reserve A Table</Button></div></div>
+        <button onClick={() => go("quick-info")} className="absolute bottom-5 right-5 flex cursor-pointer items-center gap-3 text-[0.58rem] uppercase tracking-[0.22em] text-night-foreground/60 md:bottom-8 md:right-12">Scroll to explore <ArrowDown className="size-4" /></button>
+      </div>
+    </section>
+
+    <section id="quick-info" className="bg-secondary text-secondary-foreground"><div className="section-shell grid grid-cols-2 divide-x divide-y divide-secondary-foreground/15 md:grid-cols-4 md:divide-y-0">{[["4.5 ★","326 Google Reviews"],["Rs. 1,999","Hi-Tea Cum Buffet"],["12 PM – 1:30 AM","Open Daily"],["Faisalabad","West Canal Road"]].map(([a,b]) => <div className="px-4 py-7 text-center" key={a}><p className="font-display text-xl text-gold md:text-2xl">{a}</p><p className="mt-1 text-[0.62rem] uppercase tracking-[0.16em] opacity-70">{b}</p></div>)}</div></section>
+
+    <section id="story" className="py-20 md:py-32"><div className="section-shell grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20"><div className="relative"><img src={storyAsset.url} alt="Floral arch and intimate velvet seating" loading="lazy" width={1200} height={1600} className="aspect-[3/4] w-full object-cover"/><div className="absolute -bottom-6 -right-3 bg-primary px-6 py-5 text-primary-foreground md:right-[-2rem]"><p className="font-display text-2xl">Warmth, by design.</p><p className="mt-1 text-xs uppercase tracking-[0.16em] opacity-70">West Canal Road</p></div></div><div><p className="eyebrow">Our Story</p><h2 className="display-title mt-4">Step Into The<br/>Nova Experience</h2><div className="my-8 h-px w-20 bg-gold"/><p className="max-w-xl text-lg leading-8 text-muted-foreground">Step beneath our iconic Love Lock floral arches into an intimate world of warmth. Hand-picked blooms cascade above velvet lounge seating, while the soft glow of vintage Edison bulbs creates a golden-hour atmosphere around every table.</p><p className="mt-5 max-w-xl leading-7 text-muted-foreground">Whether you arrive for afternoon hi-tea or stay late into the night over a cup of kehwa, Cafe Nova is designed for conversations, celebrations and moments worth remembering.</p></div></div></section>
+
+    <section id="hi-tea" className="bg-night text-night-foreground"><div className="grid min-h-[680px] lg:grid-cols-2"><div className="relative min-h-[420px] overflow-hidden"><img src={buffetAsset.url} alt="Premium hi-tea buffet spread" loading="lazy" width={1600} height={1200} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-105"/></div><div className="flex items-center px-6 py-16 md:px-14 lg:px-20"><div className="max-w-lg"><p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold">The Signature Experience</p><h2 className="mt-5 font-display text-5xl md:text-7xl">The Grand Buffet</h2><p className="mt-3 font-display text-2xl text-night-foreground/70">Hi-Tea Cum Buffet</p><div className="my-9 flex items-end gap-4"><p className="font-display text-6xl text-gold md:text-7xl">Rs. 1,999</p><span className="mb-2 border border-gold px-3 py-1 text-[0.62rem] font-bold tracking-[0.18em] text-gold">NO GST</span></div><p className="text-night-foreground/65">All-inclusive experience. No hidden charges.</p><Button variant="nova" size="lg" className="mt-8" onClick={() => go("menu")}>View Full Menu <ArrowRight/></Button></div></div></div></section>
+
+    <section id="menu" className="py-20 md:py-32"><div className="section-shell"><div className="text-center"><p className="eyebrow">The Menu</p><h2 className="display-title mt-4">Taste The Nova Table</h2><p className="mx-auto mt-5 max-w-xl text-muted-foreground">An all-inclusive Hi-Tea Cum Buffet experience for Rs. 1,999.</p></div><div className="mt-12 flex gap-2 overflow-x-auto border-b pb-px">{(Object.keys(menus) as Array<keyof typeof menus>).map(name => <Button key={name} variant={tab === name ? "nova-dark" : "ghost"} className="h-12 shrink-0 rounded-none px-5" onClick={() => setTab(name)}>{name}</Button>)}</div><div className="mx-auto grid max-w-4xl gap-x-12 py-10 md:grid-cols-2">{menus[tab].map((item,i) => <div key={item} className="flex min-h-15 items-center gap-4 border-b py-4"><span className="font-display text-sm text-gold">{String(i+1).padStart(2,"0")}</span><p className="text-base font-medium">{item}</p></div>)}</div><div className="border-y border-border py-5 text-center text-sm font-semibold uppercase tracking-[0.12em]">Everything included for Rs. 1,999 <span className="mx-2 text-gold">·</span> No GST <span className="mx-2 text-gold">·</span> No Hidden Charges</div></div></section>
+
+    <section id="gallery" className="bg-muted py-20 md:py-28"><div className="section-shell"><p className="eyebrow">From Our Table</p><h2 className="display-title mt-4">Made To Be Savored</h2><div className="mt-10 grid auto-rows-[260px] gap-3 md:grid-cols-3">{[[buffetAsset,"The Grand Buffet","md:col-span-2"],[storyAsset,"Love Lock Arch","md:row-span-2"],[heroAsset,"Evening Ambiance",""],[nightAsset,"Late Night Lounge","md:col-span-2"]].map(([asset,label,span]) => <figure key={label as string} className={`group relative overflow-hidden ${span}`}><img src={(asset as typeof heroAsset).url} alt={label as string} loading="lazy" width={1000} height={700} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"/><figcaption className="absolute inset-x-0 bottom-0 bg-night/75 px-5 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-night-foreground opacity-90 transition-opacity md:opacity-0 md:group-hover:opacity-100">{label as string}</figcaption></figure>)}</div></div></section>
+
+    <section className="py-20 md:py-28"><div className="section-shell"><div className="text-center"><p className="eyebrow">Why Cafe Nova</p><h2 className="mt-4 font-display text-4xl md:text-6xl">Made for more than a meal.</h2></div><div className="mt-12 grid gap-px bg-border md:grid-cols-2 lg:grid-cols-4">{[
+      { Icon: UtensilsCrossed, title: "Premium Buffet", text: "A complete Hi-Tea Cum Buffet experience with a wide variety of dishes." },
+      { Icon: Sparkles, title: "Warm Ambiance", text: "Floral arches, velvet seating and warm Edison lighting create a memorable environment." },
+      { Icon: Moon, title: "Late Night Experience", text: "Open every day until 1:30 AM." },
+      { Icon: Users, title: "Made For Moments", text: "A space designed for conversations, gatherings, celebrations and relaxed evenings." },
+    ].map(({ Icon,title,text }) => <article key={title} className="bg-background p-7 transition-transform duration-300 hover:-translate-y-1"><Icon className="size-6 text-primary"/><h3 className="mt-6 font-display text-2xl">{title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{text}</p></article>)}</div></div></section>
+
+    <section className="relative min-h-[720px] bg-night text-night-foreground"><img src={nightAsset.url} alt="Cafe Nova late night dining atmosphere" loading="lazy" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover"/><div className="hero-shade absolute inset-0"/><div className="section-shell relative flex min-h-[720px] items-center"><div className="max-w-2xl"><p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold">Late Night Dining</p><h2 className="mt-5 font-display text-5xl leading-none md:text-7xl">Because Some Nights<br/>Are Worth It.</h2><p className="mt-7 max-w-xl text-lg leading-8 text-night-foreground/75">The city sleeps, but Cafe Nova doesn't. Pull up a chair long after midnight and let the warm amber glow of our lounge be your last destination of the evening.</p><p className="mt-7 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.12em]"><Clock3 className="text-gold"/> Open Daily · 12:00 PM – 1:30 AM</p><Button variant="nova" size="lg" className="mt-8" onClick={() => go("location")}>Visit Tonight <ArrowRight/></Button></div></div></section>
+
+    <section className="bg-secondary py-16 text-secondary-foreground"><div className="section-shell text-center"><div className="text-xl tracking-[0.3em] text-gold">★★★★★</div><h2 className="mt-5 font-display text-4xl md:text-6xl">Loved By Faisalabad</h2><div className="mt-5 flex items-center justify-center gap-4"><strong className="font-display text-3xl text-gold">4.5 / 5</strong><span className="h-8 w-px bg-secondary-foreground/20"/><span className="text-sm uppercase tracking-[0.14em] opacity-70">326 Google Reviews</span></div><Button variant="nova-outline" size="lg" className="mt-7" disabled title="Google review link not provided">View Google Reviews</Button></div></section>
+
+    <section id="location" className="py-20 md:py-28"><div className="section-shell grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-stretch"><div><p className="eyebrow">Location</p><h2 className="display-title mt-4">Find Your Way<br/>To Nova</h2><div className="mt-9 space-y-7"><Info icon={MapPin} title="Cafe Nova" text={<>West Canal Road<br/>Faisal Town Canal Road<br/>Faisalabad, 38000</>}/><Info icon={Clock3} title="Open Daily" text={<>12:00 PM – 1:30 AM</>}/><Info icon={Coffee} title="Hi-Tea Buffet" text={<>Rs. 1,999 · No GST</>}/></div><Button variant="nova-dark" size="lg" className="mt-9" disabled title="Directions link not provided">Get Directions</Button></div><div className="relative min-h-[430px] overflow-hidden bg-olive text-secondary-foreground"><div className="map-grid absolute inset-0 opacity-20"/><div className="absolute inset-0 flex items-center justify-center p-8 text-center"><div><MapPin className="mx-auto size-12 text-gold"/><p className="mt-5 font-display text-3xl">West Canal Road</p><p className="mt-2 text-sm opacity-65">Interactive map will appear when a verified location link is provided.</p></div></div></div></div></section>
+
+    <section id="reserve" className="bg-muted py-20 md:py-28"><div className="section-shell grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20"><div><p className="eyebrow">Reservations</p><h2 className="display-title mt-4">Your Table<br/>Is Waiting.</h2><p className="mt-6 max-w-sm text-lg leading-8 text-muted-foreground">Gather your people, choose your time and make tonight a Nova night.</p><p className="mt-8 border-l-2 border-gold pl-4 text-sm leading-6 text-muted-foreground">This form is a reservation request prototype. It does not confirm a booking.</p></div><form onSubmit={submit} className="grid gap-5 md:grid-cols-2">{[["Name","text"],["Phone","tel"],["Date","date"],["Time","time"],["Number of Guests","number"]].map(([label,type]) => <label key={label} className="text-xs font-semibold uppercase tracking-[0.13em]">{label}<input required type={type} min={type === "number" ? "1" : undefined} className="mt-2 h-13 w-full border border-input bg-background px-4 text-base font-normal normal-case tracking-normal outline-none focus:border-primary"/></label>)}<label className="text-xs font-semibold uppercase tracking-[0.13em] md:col-span-2">Special Request<textarea className="mt-2 min-h-28 w-full resize-y border border-input bg-background p-4 text-base font-normal normal-case tracking-normal outline-none focus:border-primary"/></label><div className="md:col-span-2"><Button variant="nova-dark" size="lg" className="w-full md:w-auto" type="submit">Request Reservation <ArrowRight/></Button>{sent && <p role="status" className="mt-4 text-sm text-primary">Your request details were captured in this prototype only. Please contact Cafe Nova directly to confirm.</p>}</div></form></div></section>
+
+    <section id="contact" className="bg-night py-20 text-night-foreground"><div className="section-shell grid gap-10 border-b border-night-foreground/15 pb-16 md:grid-cols-2 md:items-end"><div><p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold">Contact</p><h2 className="mt-4 font-display text-5xl md:text-7xl">Let's Make It<br/>A Nova Night.</h2></div><div className="md:text-right"><p className="leading-7 text-night-foreground/70">Cafe Nova<br/>West Canal Road, Faisal Town Canal Road<br/>Faisalabad, 38000<br/>Open Daily · 12 PM – 1:30 AM</p><div className="mt-7 flex flex-wrap gap-2 md:justify-end">{["Call Us","Get Directions","Instagram","Facebook"].map(x => <Button key={x} variant="nova-outline" disabled title={`${x} link not provided`}>{x}</Button>)}</div></div></div><footer className="section-shell pt-12"><div className="grid gap-10 md:grid-cols-[1fr_2fr]"><div><p className="font-display text-3xl">CAFE NOVA</p><p className="mt-2 text-sm italic text-gold">Where every sip tells a story.</p></div><div className="flex flex-wrap gap-x-5 gap-y-3 md:justify-end">{nav.map(([label,id]) => <button key={id} onClick={() => go(id)} className="cursor-pointer text-xs uppercase tracking-[0.12em] text-night-foreground/60 hover:text-gold">{label.replace("Our ","")}</button>)}</div></div><div className="mt-12 grid gap-3 border-t border-night-foreground/15 pt-8 text-xs text-night-foreground/55 md:grid-cols-3"><p>West Canal Road · Faisalabad</p><p className="md:text-center">Open Daily · 12 PM – 1:30 AM</p><p className="md:text-right">Hi-Tea Buffet · Rs. 1,999 · No GST</p></div><div className="mt-8 flex flex-col gap-2 text-[0.65rem] uppercase tracking-[0.12em] text-night-foreground/35 sm:flex-row sm:justify-between"><p>© 2026 Cafe Nova. All Rights Reserved.</p><p>Crafted with ♥ in Faisalabad</p></div></footer></section>
+  </main>;
 }
+
+function Info({icon: Icon,title,text}:{icon: typeof MapPin; title:string; text:ReactNode}) { return <div className="flex gap-4"><Icon className="mt-1 size-5 shrink-0 text-primary"/><div><p className="font-semibold">{title}</p><div className="mt-1 text-sm leading-6 text-muted-foreground">{text}</div></div></div>; }

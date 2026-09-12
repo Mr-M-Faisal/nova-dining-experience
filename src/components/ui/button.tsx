@@ -10,6 +10,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        nova: "rounded-none bg-primary text-primary-foreground shadow-none hover:bg-primary/85",
+        "nova-outline":
+          "rounded-none border border-current bg-transparent text-inherit shadow-none hover:bg-foreground/10",
+        "nova-dark":
+          "rounded-none bg-foreground text-background shadow-none hover:bg-foreground/85",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
@@ -20,7 +25,7 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
+        lg: "h-12 px-7 text-xs uppercase tracking-[0.16em]",
         icon: "h-9 w-9",
       },
     },

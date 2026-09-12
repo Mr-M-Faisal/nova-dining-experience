@@ -75,6 +75,7 @@
 @utility hero-shade { background: linear-gradient(90deg, color-mix(in oklab, var(--night) 88%, transparent), color-mix(in oklab, var(--night) 28%, transparent) 68%, color-mix(in oklab, var(--night) 48%, transparent)); }
 @utility reveal-up { animation: reveal-up 0.9s ease-out both; }
 @utility hero-zoom { animation: hero-zoom 18s ease-out both; }
+@utility map-grid { background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 54px 54px; }
 
 @keyframes reveal-up { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes hero-zoom { from { transform: scale(1); } to { transform: scale(1.08); } }

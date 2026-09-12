@@ -39,7 +39,7 @@ function CafeNova() {
   return <main className="overflow-x-hidden">
     <header className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-500 ${scrolled ? "border-night-foreground/10 bg-night/90 py-3 backdrop-blur-xl" : "border-transparent bg-transparent py-5"}`}>
       <div className="section-shell flex items-center justify-between text-night-foreground">
-        <button onClick={() => go("home")} className="cursor-pointer text-left" aria-label="Cafe Nova home"><span className="block font-display text-2xl leading-none">CAFE NOVA</span><span className="mt-1 block text-[0.48rem] uppercase tracking-[0.3em] text-gold">Faisalabad</span></button>
+        <button onClick={() => go("home")} className="cursor-pointer text-left" aria-label="Cafe Nova home"><span className="block font-display text-2xl leading-none gold-shimmer">CAFE NOVA</span><span className="mt-1 block text-[0.48rem] uppercase tracking-[0.3em] text-gold">Faisalabad</span></button>
         <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">{nav.map(([label,id]) => <button key={id} onClick={() => go(id)} className="cursor-pointer text-[0.66rem] font-semibold uppercase tracking-[0.12em] text-night-foreground/80 transition-colors hover:text-gold">{label}</button>)}</nav>
         <div className="flex items-center gap-3"><Button size="lg" variant="nova" className="hidden md:inline-flex" onClick={() => go("reserve")}>Reserve a Table</Button><Button variant="nova-outline" size="icon" className="border-night-foreground/40 text-night-foreground lg:hidden" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation">{mobileOpen ? <X /> : <Menu />}</Button></div>
       </div>

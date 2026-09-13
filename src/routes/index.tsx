@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
 import { ArrowDown, ArrowRight, Clock3, Coffee, MapPin, Menu, Moon, Sparkles, Star, Users, UtensilsCrossed, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroAsset from "@/assets/cafe-nova-hero.jpg.asset.json";
@@ -26,6 +26,19 @@ const menus = {
   "Tandoor": ["Sada Roti", "Roghni Naan", "Tandoori Paratha"],
   "Desserts & Drinks": ["Fruit Custard", "Kheer", "Chocolate Brownie", "Chai", "Green Tea", "Lemon Grass Kehwa", "Mint Margarita", "Lemonade"],
 };
+
+function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setVisible(true); io.disconnect(); } }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return <div ref={ref} style={{ "--reveal-delay": `${delay}ms` } as CSSProperties} className={`scroll-reveal ${visible ? "scroll-reveal-visible" : ""} ${className}`}>{children}</div>;
+}
 
 function CafeNova() {
   const [mobileOpen, setMobileOpen] = useState(false);
